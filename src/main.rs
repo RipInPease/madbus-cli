@@ -31,7 +31,7 @@ struct Args {
     #[command(subcommand)]
     command: InputCommand,
 
-    #[arg(short, long)]
+    #[arg(short, long, default_value_t = 1)]
     unit_id: u8,
 }
 

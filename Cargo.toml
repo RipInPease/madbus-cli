@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 clap = { version = "4.5.60", features = ["derive"] }
-madbus = "0.8.0"
+madbus = { path = "/home/snorre/Rust/Projects/madbus" }
