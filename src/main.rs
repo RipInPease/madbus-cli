@@ -1,12 +1,22 @@
+use madbus::*;
 use clap::{Parser, Subcommand};
 use std::net::{Ipv4Addr, SocketAddrV4, TcpStream};
 
 
 fn main() {
-    let mut cmd = Args::parse();
+    // Get the commands from the terminal
+    let mut input = Args::parse();
 
-    cmd.ip += ":502";
-    let mut stream = TcpStream::connect(&cmd.ip).unwrap();
+    // Open a TCP connection with the server (slave)
+    input.ip += ":";
+    input.ip += &input.port.to_string();
+    let mut stream = TcpStream::connect(&input.ip).unwrap();
+
+    let cmd = get_cmd(input.command);
+    Client::send_request(&mut stream, cmd, input.unit_id).unwrap();
+
+    let response = Client::read_response(&mut stream);
+    println!("{:#?}", response);
 }
 
 
@@ -15,13 +25,19 @@ struct Args {
     #[arg(short, long)]
     ip: String,
 
+    #[arg(short, long, default_value_t = 502)]
+    port: u16,
+
     #[command(subcommand)]
-    command: Command,
+    command: InputCommand,
+
+    #[arg(short, long)]
+    unit_id: u8,
 }
 
 #[derive(Debug)]
 #[derive(Subcommand)]
-enum Command {
+enum InputCommand {
     ReadCoil {
         start: u16,
         count: u16
@@ -44,11 +60,40 @@ enum Command {
 
     WriteCoil {
         start: u16,
+
+        #[arg(required = true)]
         coils: Vec<bool>
     },
 
     WriteHolding {
         start: u16,
+
+        #[arg(required = true)]
         regs: Vec<u16>
+    }
+}
+
+
+fn get_cmd(cmd: InputCommand) -> Command {
+    use InputCommand as CMD;
+    match cmd {
+        CMD::ReadCoil{start, count}     => Command::ReadCoils   { start, count},
+        CMD::ReadDI{start, count}       => Command::ReadDI      { start, count},
+        CMD::ReadHolding{start, count}  => Command::ReadHolding { start, count },
+        CMD::ReadInput{start, count}    => Command::ReadInput   { start, count },
+        CMD::WriteCoil{start, coils}    => {
+            if coils.len() > 1 {
+                Command::WriteMultCoil { start, count: coils.len() as u16, vals: coils }
+            } else {
+                Command::WriteCoil { coil: start, state: coils[0] }
+            }
+        },
+        CMD::WriteHolding{start, regs}  => {
+            if regs.len() > 1 {
+                Command::WriteMultHolding { start, count: regs.len() as u16, vals: regs }
+            } else {
+                Command::WriteHolding { address: start, value: regs[0] }
+            }
+        }
     }
 }
