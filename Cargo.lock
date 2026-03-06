@@ -113,6 +113,8 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
 [[package]]
 name = "madbus"
 version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc3b5aec9f4cffb376dd6262ca834e37a970ed91f569433ed5e0d6b2c8ff65bb"
 
 [[package]]
 name = "madbus-cli"
