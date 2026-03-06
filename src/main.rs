@@ -40,21 +40,25 @@ struct Args {
 enum InputCommand {
     ReadCoil {
         start: u16,
+        #[arg(default_value_t = 1)]
         count: u16
     },
 
     ReadDI {
         start: u16,
+        #[arg(default_value_t = 1)]
         count: u16
     },
 
     ReadHolding {
         start: u16,
+        #[arg(default_value_t = 1)]
         count: u16
     },
 
     ReadInput {
         start: u16,
+        #[arg(default_value_t = 1)]
         count: u16
     },
 
