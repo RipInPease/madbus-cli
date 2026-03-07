@@ -2,7 +2,12 @@
 name = "madbus-cli"
 version = "0.1.0"
 edition = "2024"
+description = "A modbus tui using the madbus crate"
+homepage = "https://github.com/RipInPease/madbus-cli"
+repository = "https://github.com/RipInPease/madbus-cli"
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/madbus/latest/madbus-cli/"
 
 [dependencies]
 clap = { version = "4.5.60", features = ["derive"] }
-madbus = "0.9.0"
+madbus = "0.9.1"

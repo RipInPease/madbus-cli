@@ -1,6 +1,9 @@
 use madbus::*;
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use std::net::TcpStream;
+
+mod input;
+use input::*;
 
 
 fn main() {
@@ -13,71 +16,14 @@ fn main() {
     let mut stream = TcpStream::connect(&input.ip).unwrap();
 
     let cmd = get_cmd(input.command);
-    Client::send_request(&mut stream, cmd, input.unit_id).unwrap();
+    Client::send_request(&mut stream, cmd.clone(), input.unit_id).unwrap();
 
     let response = Client::read_response(&mut stream);
-    println!("{:#?}", response);
+    print_res(response, cmd);
 }
 
 
-#[derive(Parser, Debug)]
-struct Args {
-    #[arg(short, long)]
-    ip: String,
-
-    #[arg(short, long, default_value_t = 502)]
-    port: u16,
-
-    #[command(subcommand)]
-    command: InputCommand,
-
-    #[arg(short, long, default_value_t = 1)]
-    unit_id: u8,
-}
-
-#[derive(Debug)]
-#[derive(Subcommand)]
-enum InputCommand {
-    ReadCoil {
-        start: u16,
-        #[arg(default_value_t = 1)]
-        count: u16
-    },
-
-    ReadDI {
-        start: u16,
-        #[arg(default_value_t = 1)]
-        count: u16
-    },
-
-    ReadHolding {
-        start: u16,
-        #[arg(default_value_t = 1)]
-        count: u16
-    },
-
-    ReadInput {
-        start: u16,
-        #[arg(default_value_t = 1)]
-        count: u16
-    },
-
-    WriteCoil {
-        start: u16,
-
-        #[arg(required = true)]
-        coils: Vec<bool>
-    },
-
-    WriteHolding {
-        start: u16,
-
-        #[arg(required = true)]
-        regs: Vec<u16>
-    }
-}
-
-
+// Turns the input command to a madbus command
 fn get_cmd(cmd: InputCommand) -> Command {
     use InputCommand as CMD;
     match cmd {
@@ -98,6 +44,70 @@ fn get_cmd(cmd: InputCommand) -> Command {
             } else {
                 Command::WriteHolding { address: start, value: regs[0] }
             }
+        }
+    }
+}
+
+
+fn print_res(res: Result<(Response, u8, u16), Exception>, cmd: Command) {
+    if let Err(err) = res {
+        print_err(err);
+        return;
+    }
+
+    let res = res.unwrap();
+    let response = res.0;
+    let uid = res.1;
+
+    match response {
+        Response::ReadCoils { status } => {
+            if !matches!(cmd, Command::ReadCoils{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            let (start, count) = cmd.unwrap_read_coil();
+            for i in 0..count {
+                println!("\t{}: {}", 10000+i, status[i as usize])
+            }
+        }
+
+        _ => ()
+    }
+
+}
+
+fn print_err(err: Exception) {
+    match err {
+        Exception::IllegalCode => { 
+            println!("Received exception code from unit: IllegalCode");
+        },
+        Exception::IllegalAddress => { 
+            println!("Received exception code from unit: IllegalAddress");
+        },
+        Exception::IllegalDataValue => { 
+            println!("Received exception code from unit: IllegalDataValue");
+        },
+        Exception::ServerFailure => { 
+            println!("Received exception code from unit: ServerFailure");
+        },
+        Exception::Acknowledge => { 
+            println!("Received exception code from unit: Acknowledge");
+        },
+        Exception::ServerBusy => { 
+            println!("Received exception code from unit: ServerBusy");
+        },
+        Exception::GatewayUnavail => { 
+            println!("Received exception code from unit: GatewayUnavail");
+        },
+        Exception::BadDevice => { 
+            println!("Received exception code from unit: BadDevice");
+        },
+        Exception::FailedRead => { 
+            println!("Failed to read response due to either insufficiant number of bytes received or bytes not in accordance to the modbus standard received");
+        },
+        Exception::IOError(_) => {
+            println!("Failed to read due to an unexpected IOError with the TCPStream")
         }
     }
 }
