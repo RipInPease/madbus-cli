@@ -60,17 +60,91 @@ fn print_res(res: Result<(Response, u8, u16), Exception>, cmd: Command) {
     let uid = res.1;
 
     match response {
+        // Prints the response for ReadCoils
         Response::ReadCoils { status } => {
             if !matches!(cmd, Command::ReadCoils{..}) {
                 println!("The unit returned the wrong function code, that silly lil guy");
                 return;
             }
 
-            let (start, count) = cmd.unwrap_read_coil();
+            let (_, count) = cmd.unwrap_read_coil();
+            println!("Coil states from unit {}:", uid);
             for i in 0..count {
                 println!("\t{}: {}", 10000+i, status[i as usize])
             }
-        }
+        },
+
+        // Prints the response for ReadDI
+        Response::ReadDI { status } => {
+            if !matches!(cmd, Command::ReadDI{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            let (_, count) = cmd.unwrap_read_di();
+            println!("DI states from unit {}:", uid);
+            for i in 0..count {
+                println!("\t{}: {}", 20000+i, status[i as usize])
+            }
+        },
+
+        // Prints the response for ReadHolding
+        Response::ReadHolding { status } => {
+            if !matches!(cmd, Command::ReadHolding{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            let (_, count) = cmd.unwrap_read_holding();
+            println!("Holding reg values from unit {}:", uid);
+            for i in 0..count {
+                println!("\t{}: {}", 40000+i, status[i as usize])
+            }
+        },
+
+        // Prints the response for ReadInput
+        Response::ReadInput{ status } => {
+            if !matches!(cmd, Command::ReadInput{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            let (_, count) = cmd.unwrap_read_input();
+            println!("Input reg values from unit {}:", uid);
+            for i in 0..count {
+                println!("\t{}: {}", 30000+i, status[i as usize])
+            }
+        },
+
+        // Prints the response for WriteCoil
+        Response::WriteCoil{ coil, state } => {
+            if !matches!(cmd, Command::WriteCoil{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            println!("Unit {} wrote the coil {} to {}", uid, 10000+coil, state);
+        },
+
+        // Prints the response for WriteHolding
+        Response::WriteHolding{ address, value } => {
+            if !matches!(cmd, Command::WriteHolding{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            println!("Unit {} wrote the register {} to {}", uid, 40000+address, value);
+        },
+
+        // Prints the response for WriteMultCoil
+        Response::WriteMultCoil{ start, count } => {
+            if !matches!(cmd, Command::WriteMultCoil{..}) {
+                println!("The unit returned the wrong function code, that silly lil guy");
+                return;
+            }
+
+            println!("Unit {} wrote the registers {}..{}", uid, 40000+start, 40000+count-1);
+        },
 
         _ => ()
     }
