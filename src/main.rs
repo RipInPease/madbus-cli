@@ -67,10 +67,10 @@ fn print_res(res: Result<(Response, u8, u16), Exception>, cmd: Command) {
                 return;
             }
 
-            let (_, count) = cmd.unwrap_read_coil();
+            let (start, count) = cmd.unwrap_read_coil();
             println!("Coil states from unit {}:", uid);
             for i in 0..count {
-                println!("\t{}: {}", 10000+i, status[i as usize])
+                println!("\t{}: {}", 10000+start+i, status[i as usize])
             }
         },
 
@@ -81,10 +81,10 @@ fn print_res(res: Result<(Response, u8, u16), Exception>, cmd: Command) {
                 return;
             }
 
-            let (_, count) = cmd.unwrap_read_di();
+            let (start, count) = cmd.unwrap_read_di();
             println!("DI states from unit {}:", uid);
             for i in 0..count {
-                println!("\t{}: {}", 20000+i, status[i as usize])
+                println!("\t{}: {}", 20000+start+i, status[i as usize])
             }
         },
 
@@ -95,10 +95,10 @@ fn print_res(res: Result<(Response, u8, u16), Exception>, cmd: Command) {
                 return;
             }
 
-            let (_, count) = cmd.unwrap_read_holding();
+            let (start, count) = cmd.unwrap_read_holding();
             println!("Holding reg values from unit {}:", uid);
             for i in 0..count {
-                println!("\t{}: {}", 40000+i, status[i as usize])
+                println!("\t{}: {}", 40000+start+i, status[i as usize])
             }
         },
 
@@ -109,10 +109,10 @@ fn print_res(res: Result<(Response, u8, u16), Exception>, cmd: Command) {
                 return;
             }
 
-            let (_, count) = cmd.unwrap_read_input();
+            let (start, count) = cmd.unwrap_read_input();
             println!("Input reg values from unit {}:", uid);
             for i in 0..count {
-                println!("\t{}: {}", 30000+i, status[i as usize])
+                println!("\t{}: {}", 30000+start+i, status[i as usize])
             }
         },
 
