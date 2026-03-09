@@ -34,15 +34,15 @@ The program allows reading and writing **coils, discrete inputs, holding registe
 Clone the project and build it:
 
 ```bash
-git clone <repo-url>
-cd <repo>
+git clone https://github.com/RipInPease/madbus-cli.git
+cd madbus
 cargo build --release
 ```
 
 The binary will be located at:
 
 ```
-target/release/<binary-name>
+target/release/madbus
 ```
 
 ---
@@ -50,7 +50,7 @@ target/release/<binary-name>
 # Usage
 
 ```
-program --ip <IP> [--port <PORT>] [--unit-id <ID>] <COMMAND>
+madbus --ip <IP> [--port <PORT>] [--unit-id <ID>] <COMMAND>
 ```
 
 Defaults:
@@ -61,7 +61,7 @@ Defaults:
 Example:
 
 ```bash
-program --ip 192.168.1.10 read-coil 0 5
+madbus --ip 192.168.1.10 read-coil 0 5
 ```
 
 ---
@@ -73,13 +73,13 @@ program --ip 192.168.1.10 read-coil 0 5
 Reads one or more coil states.
 
 ```
-program --ip <IP> read-coil <start> [count]
+madbus --ip <IP> read-coil <start> [count]
 ```
 
 Example:
 
 ```bash
-program --ip 192.168.1.10 read-coil 0 8
+madbus --ip 192.168.1.10 read-coil 0 8
 ```
 
 ---
@@ -87,13 +87,13 @@ program --ip 192.168.1.10 read-coil 0 8
 ## Read Discrete Inputs
 
 ```
-program --ip <IP> read-di <start> [count]
+madbus --ip <IP> read-di <start> [count]
 ```
 
 Example:
 
 ```bash
-program --ip 192.168.1.10 read-di 0 4
+madbus --ip 192.168.1.10 read-di 0 4
 ```
 
 ---
@@ -101,13 +101,13 @@ program --ip 192.168.1.10 read-di 0 4
 ## Read Holding Registers
 
 ```
-program --ip <IP> read-holding <start> [count]
+madbus --ip <IP> read-holding <start> [count]
 ```
 
 Example:
 
 ```bash
-program --ip 192.168.1.10 read-holding 0 3
+madbus --ip 192.168.1.10 read-holding 0 3
 ```
 
 ---
@@ -115,13 +115,13 @@ program --ip 192.168.1.10 read-holding 0 3
 ## Read Input Registers
 
 ```
-program --ip <IP> read-input <start> [count]
+madbus --ip <IP> read-input <start> [count]
 ```
 
 Example:
 
 ```bash
-program --ip 192.168.1.10 read-input 0 2
+madbus --ip 192.168.1.10 read-input 0 2
 ```
 
 ---
@@ -131,19 +131,19 @@ program --ip 192.168.1.10 read-input 0 2
 Write one or more coils.
 
 ```
-program --ip <IP> write-coil <start> <value...>
+madbus --ip <IP> write-coil <start> <value...>
 ```
 
 Example:
 
 ```bash
-program --ip 192.168.1.10 write-coil 0 true
+madbus --ip 192.168.1.10 write-coil 0 true
 ```
 
 Write multiple:
 
 ```bash
-program --ip 192.168.1.10 write-coil 0 true false true
+madbus --ip 192.168.1.10 write-coil 0 true false true
 ```
 
 ---
@@ -151,19 +151,19 @@ program --ip 192.168.1.10 write-coil 0 true false true
 ## Write Holding Registers
 
 ```
-program --ip <IP> write-holding <start> <value...>
+madbus --ip <IP> write-holding <start> <value...>
 ```
 
 Example:
 
 ```bash
-program --ip 192.168.1.10 write-holding 0 10
+madbus --ip 192.168.1.10 write-holding 0 10
 ```
 
 Multiple registers:
 
 ```bash
-program --ip 192.168.1.10 write-holding 0 10 20 30
+madbus --ip 192.168.1.10 write-holding 0 10 20 30
 ```
 
 ---
