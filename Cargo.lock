@@ -118,7 +118,7 @@ checksum = "21bef1c6225812ce4cd4d2cb92300cc0546e63ed64cc287b4033ba7388da5678"
 
 [[package]]
 name = "madbus-cli"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "clap",
  "madbus",
