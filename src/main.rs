@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use madbus::*;
 use clap::Parser;
 use std::net::TcpStream;
